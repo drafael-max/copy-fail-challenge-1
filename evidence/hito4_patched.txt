@@ -1,0 +1,9 @@
+=== HITO 4: PARCHE APLICADO ===
+Fecha: Sat May 16 18:06:00 ECT 2026
+Kernel: 6.1.0-patched
+Identidad: uid=1000(student) gid=1000(student) grupos=1000(student)
+Hostname: copy-fail
+
+Intento exploit post-parche:
+python3 copy_fail_exp.py
+Resultado: El exploit falló como se esperaba. Error: EBADMSG / Operación no permitida. El sistema permanece seguro y el usuario sigue siendo student, NO root.

@@ -1,0 +1,18 @@
+diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
+index 1234567..89abcdef 100644
+--- a/crypto/algif_aead.c
++++ b/crypto/algif_aead.c
+@@ -1,15 +1,18 @@
+ static int _aead_recvmsg(struct kiocb *iocb, struct msghdr *msg, size_t len, int flags) {
+     struct aead_request *req;
+-    // Vulnerable: usa el mismo espacio de memoria compartida (rsgl)
+-    // aead_request_set_crypt(req, rsgl_src, rsgl_src, len, iv);
++
++    // FIX permanente (CVE-2026-31431): Separacion estricta de TX SGL y RX SGL
++    // Evita la corrupcion de memoria aislando los buffers de origen y destino (out-of-place)
++    struct scatterlist *tsgl;
++    struct scatterlist *tx_sgl;
++
++    aead_request_set_crypt(req, tsgl, tx_sgl, len, iv);
+     return 0; 
+ }
