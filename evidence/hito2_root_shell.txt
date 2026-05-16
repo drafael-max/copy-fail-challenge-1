@@ -1,0 +1,13 @@
+=== HITO 2: EXPLOIT EXITOSO ===
+Fecha: Sat May 16 04:12:29 UTC 2026
+Timestamp: 2026-05-16T04:12:29Z
+Hostname: copy-fail-Rafael-Patin
+Identidad POST-exploit: uid=0(root) gid=1001(student) groups=1001(student)
+Kernel: 6.1.0-vulnerable
+SHA256 del exploit usado:
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  copy_fail_exp.py
+
+--- Salida del exploit ---
+[*] Lanzando exploit para CVE-2026-31431 (AF_ALG)...
+[+] ¡Explotación exitosa! Escalando privilegios...
+uid=0(root) gid=1001(student) groups=1001(student)
