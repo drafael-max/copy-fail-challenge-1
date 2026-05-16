@@ -52,7 +52,7 @@ done
 # Python stdlib mínima
 PYTHON_VER=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
 mkdir -p "$INITRAMFS_DIR/usr/lib/python${PYTHON_VER}"
-cp -r /usr/lib/python3 "$INITRAMFS_DIR/usr/lib/" 2>/dev/null || \
+cp -r /usr/lib/python3.12 "$INITRAMFS_DIR/usr/lib/" 2>/dev/null || \
   cp -r /usr/lib/python${PYTHON_VER} "$INITRAMFS_DIR/usr/lib/" 2>/dev/null || true
 ln -sf python3 "$INITRAMFS_DIR/usr/bin/python" 2>/dev/null || true
 
