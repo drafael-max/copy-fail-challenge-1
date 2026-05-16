@@ -84,7 +84,54 @@ copy-fail-challenge/
 
 
 
-#Commit 1
+#MILESTONE 1
+
+First, we need to configure our Git identity. Then we compile the kernel and roofts and run the commands `make setup` and `make qemu`. Since we encountered a panic error, here's how we fixed it.
+
+Initial Problem: When attempting to boot the virtual machine in QEMU using the `make qemu` command, the system would immediately crash, throwing a critical Kernel Panic error (Failed to execute /init (error -2) - No working init found).
+
+Root Cause: The Kernel Panic occurred because the temporary filesystem file (rootfs.cpio.gz) was not being generated in the project root. Upon reviewing the detailed build logs, it was identified that the `make kernel` automation script (`scripts/01_build_kernel.sh`) was abruptly aborting with an Error 2 during the compression of the generic image (`arch/x86/boot/compressed/vmlinux.bin.xz`). The GitHub Codespaces container lacked the necessary native development and compression dependencies (specifically, tools for packaging in .xz format), preventing the kernel from completing the compilation successfully.
+
+Solution Applied:
+
+Dependency Installation: The environment's internal repositories were updated, and the essential compilation and compression packages were manually installed from the root terminal:
+
+Bash
+apt-get update && apt-get install -y xz-utils lzma-dev libelf-dev bc bison flex libssl-dev
+Environment Cleanup: A `make clean` command was executed within the kernel source directory (kernel/linux) to remove remnants of the previous corrupt compilation.
+
+Successful Compilation: The builder script was re-run directly (bash scripts/01_build_kernel.sh), successfully compiling the vulnerable Linux kernel (v6.12) and packaging the initramfs without errors.
+
+VM Deployment: The resulting binaries (bzImage_vuln and initramfs.cpio.gz) were mapped to their corresponding names in the working directory, and QEMU was started using the assigned identity:
+
+Bash
+STUDENT_ID=Rafael make qemu
+Result: The Linux virtual machine booted flawlessly, correctly loading initramfs and granting direct access to the interactive prompt of the test environment ([student@copy-fail ~]$).
+
+1. Environment Verification (Step 1.3):
+
+The virtual machine controlled by QEMU was successfully logged in, verifying that the active user met the exercise restrictions (student) and that the operating system was running the native development version (Kernel 6.12.0).
+
+Module Diagnostics: When running diagnostic commands such as lsmod, the system indicated that the /proc/modules directory did not exist. This confirmed completely normal and correct behavior for this type of scenario: when compiling a kernel in its tiny (ultra-lightweight) variant, the cryptographic support and the vulnerable component (algif_aead) are not dynamically loaded as external modules, but are statically integrated into the core of the binary (bzImage).
+
+2. Evidence Extraction and Creation (Step 1.4):
+
+Because the virtual machine's minimalist environment restricts write permissions to temporary directories (such as /tmp) for unprivileged users, this limitation was circumvented by printing the control metadata directly into the terminal stream.
+
+The output data (including the custom hostname copy-fail-Rafael-Patin, date, version, and UID) was copied from the QEMU console.
+
+After exiting the simulation cleanly (Ctrl+A+X), the system returned to the Codespaces GitHub host, where the corresponding folder was created and the information was saved using a text editor in the path: evidence/hito1_vuln_confirmed.txt.
+
+3. Consolidation and Deployment on GitHub (Step 1.5):
+
+Once the final file was verified on the host using the `cat` tool, the document was indexed into the Git working tree (`git add`).
+
+A descriptive commit was made to record the success of the operation, and an immutable version tag was generated (`git tag -a milestone-1`).
+
+Finally, both the main branch and the tags were synchronized with the remote server using `git push origin main --tags`, leaving the progress completely frozen, backed up to the cloud, and ready for evaluation.
+
+![alt text](image.png)
+![alt text](image-1.png)
 
 #Commit 2
 
